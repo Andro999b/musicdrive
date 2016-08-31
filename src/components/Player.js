@@ -53,6 +53,7 @@ class Player extends React.Component {
     if (this.props.currentPlay) {
       const paused = !this.state.paused;
       paused ? audio.pause() : audio.play();
+
       this.setState({ paused })
     }
   }
@@ -98,7 +99,8 @@ class Player extends React.Component {
     this.refs.audio.loop = this.state.loop;
   }
   componentWillReceiveProps(props) {
-    if (props.currentPlay)
+    //play another file
+    if (props.currentPlay && props.currentPlay.webContentLink != this.refs.audio.currentSrc)
       this.setState({
         paused: false,
         buffered: 0
@@ -106,8 +108,9 @@ class Player extends React.Component {
   }
   componentDidUpdate() {
     const audio = this.refs.audio;
-    if (this.props.currentPlay && !this.state.paused)//emulate audio play
+    if (this.props.currentPlay && !this.state.paused){//emulate audio play
       audio.play();
+    }
   }
   render() {
     const currentPlay = this.props.currentPlay;
