@@ -69,9 +69,6 @@ class Files extends React.Component {
 
         return (
             <div>
-                <List>
-                    {items}
-                </List>
                 <Toolbar style={{ padding: null }}>
                     <ToolbarGroup style={{margin: "0 auto"}}>
                         <FlatButton style={btnStyle} label="Reload" icon={<NavigationRefresh/>} onTouchTap={() => this.props.reload() }/>
@@ -79,6 +76,9 @@ class Files extends React.Component {
                         <FlatButton style={btnStyle} label="Play all" icon={<AvPlaylistPlay/>} onTouchTap={() => this.props.playAll(currentFiles) }/>
                     </ToolbarGroup>
                 </Toolbar>
+                <List>
+                    {items}
+                </List>
             </div>
         )
     }

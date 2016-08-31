@@ -78,13 +78,13 @@ class Playlist extends React.Component {
 
     return (
       <div>
+        <Player/>
         <SortableList
           files={files}
           useDragHandle={true}
           currentPlay={currentPlay}
           callbacks={itemCallbacks}
           onSortEnd={this.onSortEnd.bind(this) }/>
-        <Player/>
       </div>
     )
   }
