@@ -102,6 +102,10 @@ class Player extends React.Component {
         buffered: 0
       })
   }
+  componentDidUpdate() {
+    if(!this.state.paused)//emulate audio play
+      this.refs.audio.play();
+  }
   render() {
     const currentPlay = this.props.currentPlay;
     let src = '';
@@ -147,14 +151,17 @@ class Player extends React.Component {
             </IconButton>
             <Slider
               ref="seeker"
-              style={{ width: 230, marginTop: -5 }}
+              style={{ width: 210, marginTop: -5 }}
               value={this.state.currentTime}
               max={this.state.duration}
               step={1}
               onChange={() => this.displayPosition() }
               onDragStop={() => this.setPosition() }/>
-            <IconButton onTouchTap={() => this.switchLoop() }>
+            <IconButton style={iconsBtnStyle}  onTouchTap={() => this.switchLoop() }>
               {repeatLoopIcon }
+            </IconButton>
+            <IconButton style={iconsBtnStyle} onTouchTap={() => this.props.shufflePlaylist() }>
+              <AvShuffle/>
             </IconButton>
           </ToolbarGroup>
         </Toolbar>
@@ -164,15 +171,12 @@ class Player extends React.Component {
               {volumeIcon}
             </IconButton>
             <Slider style={{ width: 80, marginTop: -5 }} value={this.state.muted ? 0 : this.state.volume} onChange={(e, v) => this.setVolume(v) }/>
-            <ToolbarTitle style={{ marginLeft: 10 }} text={statusText} />
-            <IconButton style={iconsBtnStyle} onTouchTap={() => this.props.shufflePlaylist() }>
-              <AvShuffle/>
-            </IconButton>
+            <ToolbarTitle style={{ marginLeft: 5 }} text={statusText} />
           </ToolbarGroup>
         </Toolbar>
         <audio
           ref="audio"
-          src={src} autoPlay
+          src={src}
           onProgress ={(e) => this.updateBuffered() }
           onLoadStart ={(e) => this.updateBuffered() }
           onEnded={() => this.playNext() }

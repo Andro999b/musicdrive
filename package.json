@@ -4,7 +4,7 @@
   "description": "google drive music player",
   "main": "index.js",
   "scripts": {
-    "server": "webpack-dev-server --no-info"
+    "server": "webpack-dev-server --no-info --content-base build/"
   },
   "keywords": [
     "google",
