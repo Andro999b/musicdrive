@@ -78,7 +78,7 @@ class Player extends React.Component {
   }
   setPosition() {
     const currentTime = this.refs.seeker.getValue();
-    if(isFinite(currentTime)){
+    if (isFinite(currentTime)) {
       this.refs.audio.currentTime = currentTime;
       this.setState({ currentTime })
     }
@@ -92,6 +92,12 @@ class Player extends React.Component {
       this.refs.audio.pause();
       this.setState({ paused: true, currentTime: 0, duration: 0, buffered: 0 })
       this.props.playNext();
+    }
+  }
+  onError(event) {
+    if (this.props.currentPlay) {
+      console.log("Fail to play: ", this.props.currentPlay, event.nativeEvent);
+      this.playNext()
     }
   }
   componentDidMount() {
@@ -108,7 +114,7 @@ class Player extends React.Component {
   }
   componentDidUpdate() {
     const audio = this.refs.audio;
-    if (this.props.currentPlay && !this.state.paused){//emulate audio play
+    if (this.props.currentPlay && !this.state.paused) {//emulate audio play
       audio.play();
     }
   }
@@ -186,7 +192,7 @@ class Player extends React.Component {
           onProgress ={(e) => this.updateBuffered() }
           onLoadStart ={(e) => this.updateBuffered() }
           onEnded={() => this.playNext() }
-          onError={() => this.playNext() }
+          onError={(e) => this.onError(e) }
           onTimeUpdate={() => this.updateTime() }>
         </audio>
       </div>
