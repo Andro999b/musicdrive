@@ -5,3 +5,5 @@ export const setCurrentPlaylistFile = createAction("SET_CURRENT_PLAYLIST_FILE", 
 export const playFiles = createAction("PLAY_FILES", files => ({files}));
 export const addFilesToPlaylist = createAction("ADD_PLAYLIST_FILES", files => ({files}));
 export const playNext = createAction("PLAY_NEXT");
+export const movePlaylistFile = createAction("MOVE_PLAYLIST_FILE", (oldIndex, newIndex) => ({oldIndex, newIndex}));
+export const shufflePlaylist = createAction("SHUFFLE_PLAYLIST");

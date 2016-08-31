@@ -1,6 +1,13 @@
 import { handleActions } from 'redux-actions';
 
 export default handleActions({
+    "RELOAD": (state, action) => {
+        state.history.pop();
+        return Object.assign({}, {
+            history: state.history.concat(action.payload),
+            currentFiles: action.payload.files
+        })
+    },
     "GO_FOLDER": (state, action) => (
         Object.assign({}, {
             history: state.history.concat(action.payload),

@@ -2,15 +2,18 @@ import React from 'react'
 import { connect } from 'react-redux';
 
 import changeScrean from '../actions/changeScrean'
-import goFolder from '../actions/goFolder'
-import goBack from '../actions/goBack'
+import {nextFolder, goBack, reloadFolder} from '../actions/foldersActions'
 import {addFilesToPlaylist, playFiles} from '../actions/playlistActions'
 
 import {List, ListItem} from 'material-ui/List';
 
+import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh'
+import FileDownload from 'material-ui/svg-icons/file/file-download';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import AvMusicVideo from 'material-ui/svg-icons/av/music-video';
-import ContentAdd from 'material-ui/svg-icons/content/add';
+import AvQueue from 'material-ui/svg-icons/av/queue';
+import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
+import AvPlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
 
 import {grey400} from 'material-ui/styles/colors';
 
@@ -23,34 +26,45 @@ class Files extends React.Component {
         const { history, currentFiles } = this.props;
 
         let items = currentFiles.map(file => {
-            if(file.folder) {
-                return (<ListItem key={file.id} 
-                    primaryText={file.name} 
-                    leftIcon={<FileFolder/>} 
-                    onTouchTap={() => this.props.openFolder(file)}/>)
+            if (file.folder) {
+                return (<ListItem key={file.id}
+                    primaryText={file.name}
+                    leftIcon={<FileFolder/>}
+                    onTouchTap={() => this.props.openFolder(file) }/>)
             } else {
                 const rightIconButton = (
-                    <IconButton onTouchTap={() => this.props.addToPlaylist(file)}>
-                        <ContentAdd/>
-                    </IconButton>
+                    <div>
+                        <IconButton onTouchTap={() => window.open(file.webContentLink, "_blank") }>
+                            <FileDownload/>
+                        </IconButton>
+                        <IconButton onTouchTap={() => this.props.addToPlaylist(file) }>
+                            <AvQueue/>
+                        </IconButton>
+                    </div>
                 )
 
-                return (<ListItem key={file.id}
-                    primaryText={file.name} 
+                return (<ListItem
+                    key={file.id}
+                    innerDivStyle={{paddingRight: 92}}
+                    primaryText={file.name}
                     leftIcon={<AvMusicVideo/>}
                     rightIconButton={rightIconButton}
-                    onTouchTap={() => this.props.playFile(file)}/>)
-            }     
+                    onTouchTap={() => this.props.playFile(file) }/>)
+            }
         });
 
-        if(history.length > 1) {
+        if (history.length > 1) {
             items = [(
-                <ListItem 
-                    key="back" 
-                    primaryText=".." 
-                    leftIcon={<FileFolder/>} 
-                    onTouchTap={() => this.props.onGoBack()}/>
+                <ListItem
+                    key="back"
+                    primaryText=".."
+                    leftIcon={<FileFolder/>}
+                    onTouchTap={() => this.props.onGoBack() }/>
             )].concat(items)
+        }
+
+        let btnStyle = {
+            margin: "10px 5px"
         }
 
         return (
@@ -58,11 +72,11 @@ class Files extends React.Component {
                 <List>
                     {items}
                 </List>
-                <Toolbar>
-                    <ToolbarGroup/>
-                    <ToolbarGroup>
-                        <FlatButton label="Add all" onTouchTap={() => this.props.addAllToPlaylist(currentFiles)}/>
-                        <FlatButton label="Play all" onTouchTap={() => this.props.playAll(currentFiles)}/>
+                <Toolbar style={{ padding: null }}>
+                    <ToolbarGroup style={{margin: "0 auto"}}>
+                        <FlatButton style={btnStyle} label="Reload" icon={<NavigationRefresh/>} onTouchTap={() => this.props.reload() }/>
+                        <FlatButton style={btnStyle} label="Add all" icon={<AvPlaylistAdd/>} onTouchTap={() => this.props.addAllToPlaylist(currentFiles) }/>
+                        <FlatButton style={btnStyle} label="Play all" icon={<AvPlaylistPlay/>} onTouchTap={() => this.props.playAll(currentFiles) }/>
                     </ToolbarGroup>
                 </Toolbar>
             </div>
@@ -71,8 +85,11 @@ class Files extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+    reload() {
+        dispatch(reloadFolder());
+    },
     openFolder(file) {
-        dispatch(goFolder(file.id))
+        dispatch(nextFolder(file.id))
     },
     playFile(file) {
         dispatch(changeScrean("playlist"))

@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import promiseMiddleware from 'redux-promise'
+import trunk from 'redux-thunk'
 
 import filesReducer from './reducers/files'
 import screanReducer from './reducers/screan'
@@ -9,4 +9,4 @@ export default createStore(combineReducers({
     files: filesReducer,
     screan: screanReducer,
     playlist: playlistReducer
-}), applyMiddleware(promiseMiddleware))
+}), applyMiddleware(trunk))

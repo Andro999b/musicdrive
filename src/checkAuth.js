@@ -31,8 +31,9 @@ export default new Promise((resolve, reject) => {
         } else {
             if (authResult.error == "immediate_failed") {
                 doAuth();
+            } else {
+                reject(authResult)
             }
-            reject(authResult)
         }
     }
 });
