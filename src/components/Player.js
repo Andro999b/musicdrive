@@ -1,7 +1,7 @@
 import React from "react"
 import { connect } from 'react-redux';
 
-import {playNext, shufflePlaylist} from '../actions/playlistActions';
+import {playNext, shufflePlaylist, setVolume} from '../actions/playlistActions';
 
 import AvPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import AvPause from 'material-ui/svg-icons/av/pause';
@@ -28,7 +28,6 @@ class Player extends React.Component {
   constructor(params) {
     super(params)
     this.state = {
-      volume: 0.5,
       muted: false,
       paused: false,
       currentTime: 0,
@@ -50,11 +49,12 @@ class Player extends React.Component {
     this.setState({ looped })
   }
   playPause() {
-    const paused = !this.state.paused;
     const audio = this.refs.audio;
-    paused ? audio.pause() : audio.play();
-
-    this.setState({ paused })
+    if (this.props.currentPlay) {
+      const paused = !this.state.paused;
+      paused ? audio.pause() : audio.play();
+      this.setState({ paused })
+    }
   }
   updateTime() {
     const audio = this.refs.audio;
@@ -73,26 +73,28 @@ class Player extends React.Component {
   }
   setVolume(volume) {
     this.refs.audio.volume = volume;
-    this.setState({ volume })
+    this.props.setVolume(volume)
   }
   setPosition() {
     const currentTime = this.refs.seeker.getValue();
-    this.refs.audio.currentTime = currentTime;
-    this.setState({ currentTime })
+    if(isFinite(currentTime)){
+      this.refs.audio.currentTime = currentTime;
+      this.setState({ currentTime })
+    }
   }
   displayPosition() {
     const currentTime = this.refs.seeker.getValue();
     this.setState({ currentTime })
   }
   playNext() {
-    if (!this.state.looped) {
+    if (this.props.currentPlay && !this.state.looped) {
       this.refs.audio.pause();
       this.setState({ paused: true, currentTime: 0, duration: 0, buffered: 0 })
       this.props.playNext();
     }
   }
   componentDidMount() {
-    this.refs.audio.volume = this.state.volume;
+    this.refs.audio.volume = this.props.volume;
     this.refs.audio.loop = this.state.loop;
   }
   componentWillReceiveProps(props) {
@@ -103,8 +105,9 @@ class Player extends React.Component {
       })
   }
   componentDidUpdate() {
-    if(!this.state.paused)//emulate audio play
-      this.refs.audio.play();
+    const audio = this.refs.audio;
+    if (this.props.currentPlay && !this.state.paused)//emulate audio play
+      audio.play();
   }
   render() {
     const currentPlay = this.props.currentPlay;
@@ -118,7 +121,7 @@ class Player extends React.Component {
     }
 
     let volumeIcon;
-    if (this.state.volume == 0 || this.state.muted) {
+    if (this.props.volume == 0 || this.state.muted) {
       volumeIcon = <AvVolumeOff/>
     } else {
       volumeIcon = <AvVolumeUp/>
@@ -140,7 +143,7 @@ class Player extends React.Component {
 
     const statusText = `${formatTime(this.state.currentTime)} / ${formatTime(this.state.duration)} (${this.state.buffered}%)`;
     const toolbarStyle = { paddingLeft: 5, paddingRight: 5, height: null, display: "block" };
-    const toolbarGroupStyle = { height: 56, maxWidth: 375, margin: "0 auto"};
+    const toolbarGroupStyle = { height: 56, maxWidth: 375, margin: "0 auto" };
 
     return (
       <div>
@@ -170,7 +173,7 @@ class Player extends React.Component {
             <IconButton style={iconsBtnStyle} onTouchTap={() => this.switchMute() }>
               {volumeIcon}
             </IconButton>
-            <Slider style={{ width: 80, marginTop: -5 }} value={this.state.muted ? 0 : this.state.volume} onChange={(e, v) => this.setVolume(v) }/>
+            <Slider style={{ width: 80, marginTop: -5 }} value={this.state.muted ? 0 : this.props.volume} onChange={(e, v) => this.setVolume(v) }/>
             <ToolbarTitle style={{ marginLeft: 5 }} text={statusText} />
           </ToolbarGroup>
         </Toolbar>
@@ -191,6 +194,9 @@ class Player extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    setVolume(value) {
+      dispatch(setVolume(value));
+    },
     shufflePlaylist() {
       dispatch(shufflePlaylist());
     },

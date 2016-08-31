@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 
 import checkAuth from './checkAuth'
 import store from './store'
-import {nextFolder} from './actions/foldersActions'
+import restoreApp from './actions/reastoreApp'
 
 import App from "./app"
 
@@ -16,5 +16,5 @@ checkAuth
             </Provider>
         ), document.getElementById('root'))
     })
-    .then(() => store.dispatch(nextFolder()))
+    .then(() => store.dispatch(restoreApp()))
     .catch((error) => console.log("Fail to boot with error: ", error))

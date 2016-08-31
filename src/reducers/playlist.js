@@ -1,24 +1,5 @@
 import { handleActions } from 'redux-actions';
-
-function shuffle(array) {
-    let counter = array.length;
-
-    // While there are elements in the array
-    while (counter > 0) {
-        // Pick a random index
-        let index = Math.floor(Math.random() * counter);
-
-        // Decrease counter by 1
-        counter--;
-
-        // And swap the last element with it
-        let temp = array[counter];
-        array[counter] = array[index];
-        array[index] = temp;
-    }
-
-    return array;
-}
+import shuffle from '../utils/shuffle';
 
 export default handleActions({
     "PLAY_FILES": (state, action) => {
@@ -32,8 +13,7 @@ export default handleActions({
            !(f.folder || state.files.find(sf => sf.id == f.id))
         );
         return Object.assign({}, state, {
-            files: state.files.concat(files),
-            currentPlay: state.currentPlay
+            files: state.files.concat(files)
         })
     },
     "REMOVE_PLAYLIST_FILE": (state, action) => {
@@ -79,5 +59,8 @@ export default handleActions({
         newFiles[oldIndex] = state.files[newIndex];
 
         return Object.assign({}, state, {files: newFiles});
+    },
+    "SET_VOLUME": (state, action) =>  {
+        return Object.assign({}, state, {volume: action.payload});
     }
-}, {files: [], currentPlay:null});
+}, {files: [], currentPlay: null, volume: 0.5});

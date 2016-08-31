@@ -1,4 +1,5 @@
 import { createAction } from 'redux-actions';
+import {loadStore} from '../persist'
 
 const fields = 'files(id,kind,mimeType,name,webContentLink),kind';
 
@@ -51,6 +52,7 @@ function reloadFolder() {
     }
 }
 
+
 const goBack = createAction("GO_BACK");
 
-export {nextFolder, goBack, reloadFolder}; 
+export {nextFolder, goBack, reloadFolder, makePayload}; 

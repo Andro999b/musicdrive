@@ -7,3 +7,4 @@ export const addFilesToPlaylist = createAction("ADD_PLAYLIST_FILES", files => ({
 export const playNext = createAction("PLAY_NEXT");
 export const movePlaylistFile = createAction("MOVE_PLAYLIST_FILE", (oldIndex, newIndex) => ({oldIndex, newIndex}));
 export const shufflePlaylist = createAction("SHUFFLE_PLAYLIST");
+export const setVolume = createAction("SET_VOLUME", volume => volume);
