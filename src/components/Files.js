@@ -68,17 +68,21 @@ class Files extends React.Component {
         }
 
         return (
-            <div>
-                <Toolbar style={{ padding: null }}>
-                    <ToolbarGroup style={{margin: "0 auto"}}>
-                        <FlatButton style={btnStyle} label="Reload" icon={<NavigationRefresh/>} onTouchTap={() => this.props.reload() }/>
-                        <FlatButton style={btnStyle} label="Add all" icon={<AvPlaylistAdd/>} onTouchTap={() => this.props.addAllToPlaylist(currentFiles) }/>
-                        <FlatButton style={btnStyle} label="Play all" icon={<AvPlaylistPlay/>} onTouchTap={() => this.props.playAll(currentFiles) }/>
-                    </ToolbarGroup>
-                </Toolbar>
-                <List>
-                    {items}
-                </List>
+            <div style={this.props.style}>
+                <div style={{marginBottom: 56}}>
+                    <List>
+                        {items}
+                    </List>
+                </div>
+                <div style={{position: "fixed", width: "100%", bottom: 0}}>
+                    <Toolbar style={{ padding: null }}>
+                        <ToolbarGroup style={{margin: "0 auto"}}>
+                            <FlatButton style={btnStyle} label="Reload" icon={<NavigationRefresh/>} onTouchTap={() => this.props.reload() }/>
+                            <FlatButton style={btnStyle} label="Add all" icon={<AvPlaylistAdd/>} onTouchTap={() => this.props.addAllToPlaylist(currentFiles) }/>
+                            <FlatButton style={btnStyle} label="Play all" icon={<AvPlaylistPlay/>} onTouchTap={() => this.props.playAll(currentFiles) }/>
+                        </ToolbarGroup>
+                    </Toolbar>
+                </div>
             </div>
         )
     }

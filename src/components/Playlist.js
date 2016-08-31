@@ -77,14 +77,19 @@ class Playlist extends React.Component {
     }
 
     return (
-      <div>
-        <Player/>
-        <SortableList
-          files={files}
-          useDragHandle={true}
-          currentPlay={currentPlay}
-          callbacks={itemCallbacks}
-          onSortEnd={this.onSortEnd.bind(this) }/>
+      <div style={this.props.style}>
+        <div style={{ marginBottom: 112 }}>
+          <SortableList
+            files={files}
+            pressDelay={200}
+            useDragHandle={true}
+            currentPlay={currentPlay}
+            callbacks={itemCallbacks}
+            onSortEnd={this.onSortEnd.bind(this) }/>
+        </div>
+        <div style={{ position: "fixed", width: "100%", bottom: 0 }}>
+          <Player/>
+        </div>
       </div>
     )
   }

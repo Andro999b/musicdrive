@@ -29,14 +29,18 @@ class App extends React.Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={appTheme}>
-                <Tabs value={this.props.tab} onChange={this.props.tabChange}>
-                    <Tab label="files" value="files">
-                        <Files/>
-                    </Tab>
-                    <Tab label="playlist" value="playlist">
-                        <Playlist/>
-                    </Tab>
-                </Tabs>
+                <div>
+                    <div style={{position: "fixed", width: "100%", top: 0, zIndex: 1}}>
+                        <Tabs value={this.props.tab} onChange={this.props.tabChange}>
+                            <Tab label="files" value="files"></Tab>
+                            <Tab label="playlist" value="playlist"></Tab>
+                        </Tabs>
+                    </div>
+                    <div style={{marginTop: 48}}>
+                        <Files style={{display: this.props.tab == "files" ? "block": "none"}}/>
+                        <Playlist style={{display: this.props.tab == "playlist" ? "block": "none"}}/>
+                    </div>
+                </div>
             </MuiThemeProvider>
         )
     }
