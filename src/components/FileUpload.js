@@ -11,8 +11,8 @@ import {
     green800 as grean
 } from 'material-ui/styles/colors';
 
-const DRAG_HERE = "Drag you mp3 files here"
-const DROP_HERE = "Drop you mp3 files here"
+const DRAG_HERE = "Drag your mp3 files here"
+const DROP_HERE = "Drop your mp3 files here"
 const WRON_FILE_TYPE = "Wrong file type!"
 
 
