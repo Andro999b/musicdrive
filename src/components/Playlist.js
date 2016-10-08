@@ -78,7 +78,7 @@ class Playlist extends React.Component {
 
     return (
       <div style={this.props.style}>
-        <div style={{ marginBottom: 112 }}>
+        <div style={{ marginBottom: 112, userSelect: "none" }}>
           <SortableList
             files={files}
             pressDelay={20}
