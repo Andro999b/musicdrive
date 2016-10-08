@@ -81,7 +81,7 @@ class Playlist extends React.Component {
         <div style={{ marginBottom: 112 }}>
           <SortableList
             files={files}
-            pressDelay={200}
+            pressDelay={20}
             useDragHandle={true}
             currentPlay={currentPlay}
             callbacks={itemCallbacks}
