@@ -2,26 +2,46 @@ import React from 'react'
 import { connect } from 'react-redux';
 
 import changeScrean from '../actions/changeScrean'
-import {nextFolder, goBack, reloadFolder} from '../actions/foldersActions'
+import {onDragEnter, onDragLeave, onDrop} from '../actions/uploadActions'
+import {nextFolder, goBack, reloadFolder, deleteFile} from '../actions/foldersActions'
 import {addFilesToPlaylist, playFiles} from '../actions/playlistActions'
 
 import {List, ListItem} from 'material-ui/List';
 
 import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh'
-import FileDownload from 'material-ui/svg-icons/file/file-download';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import AvMusicVideo from 'material-ui/svg-icons/av/music-video';
 import AvQueue from 'material-ui/svg-icons/av/queue';
 import AvPlaylistAdd from 'material-ui/svg-icons/av/playlist-add';
 import AvPlaylistPlay from 'material-ui/svg-icons/av/playlist-play';
 
-import {grey400} from 'material-ui/styles/colors';
-
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+
+import FileUpload from './FileUpload'
+import DeleteAlert from './dialog/DeleteAlert'
 
 class Files extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            deleteFile: null
+        }
+    }
+    deleteFile(file) {
+        this.setState({deleteFile: file});
+    }
+    cancelDelete() {
+        this.setState({deleteFile: null});
+    }
+    acceptDelete() {
+        this.props.deleteFile(this.state.deleteFile);
+        this.setState({deleteFile: null});
+    }
     render() {
         const { history, currentFiles } = this.props;
 
@@ -34,18 +54,26 @@ class Files extends React.Component {
             } else {
                 const rightIconButton = (
                     <div>
-                        <IconButton onTouchTap={() => window.open(file.webContentLink, "_blank") }>
-                            <FileDownload/>
-                        </IconButton>
                         <IconButton onTouchTap={() => this.props.addToPlaylist(file) }>
                             <AvQueue/>
                         </IconButton>
+                        <IconMenu
+                            iconButtonElement={
+                                <IconButton touch={true}>
+                                    <MoreVertIcon />
+                                </IconButton>
+                            }
+                            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                            >
+                            <MenuItem primaryText="Download" onTouchTap={() => window.open(file.webContentLink, "_blank") }/>
+                            <MenuItem primaryText="Delete" onTouchTap={() => this.deleteFile(file)}/>
+                        </IconMenu>
                     </div>
                 )
 
                 return (<ListItem
                     key={file.id}
-                    innerDivStyle={{paddingRight: 92}}
+                    innerDivStyle={{ paddingRight: 92 }}
                     primaryText={file.name}
                     leftIcon={<AvMusicVideo/>}
                     rightIconButton={rightIconButton}
@@ -67,16 +95,31 @@ class Files extends React.Component {
             margin: "10px 5px"
         }
 
+        
+        let showDeletDialog = this.state.deleteFile != null;
+        let deleteDialog= <DeleteAlert 
+                open={showDeletDialog}
+                fileName={showDeletDialog?this.state.deleteFile.name:""} 
+                onCancel={() => this.cancelDelete()} 
+                onOk={() => this.acceptDelete()}
+            />
+        
         return (
-            <div style={this.props.style}>
-                <div style={{marginBottom: 56}}>
-                    <List>
+            <div style={this.props.style}
+                onDragEnter={e => this.props.onDragEnter(e) }
+                onMouseOut={() => this.props.onDragLeave() }
+                onDrop={e => this.props.onDrop(e) }
+                >
+                {deleteDialog}
+                <div style={{ marginBottom: 56 }}>
+                    <FileUpload/>
+                    <List style={{ paddingTop: 0 }}>
                         {items}
                     </List>
                 </div>
-                <div style={{position: "fixed", width: "100%", bottom: 0}}>
+                <div style={{ position: "fixed", width: "100%", bottom: 0 }}>
                     <Toolbar style={{ padding: null }}>
-                        <ToolbarGroup style={{margin: "0 auto"}}>
+                        <ToolbarGroup style={{ margin: "0 auto" }}>
                             <FlatButton style={btnStyle} label="Reload" icon={<NavigationRefresh/>} onTouchTap={() => this.props.reload() }/>
                             <FlatButton style={btnStyle} label="Add all" icon={<AvPlaylistAdd/>} onTouchTap={() => this.props.addAllToPlaylist(currentFiles) }/>
                             <FlatButton style={btnStyle} label="Play all" icon={<AvPlaylistPlay/>} onTouchTap={() => this.props.playAll(currentFiles) }/>
@@ -94,6 +137,9 @@ const mapDispatchToProps = (dispatch) => ({
     },
     openFolder(file) {
         dispatch(nextFolder(file.id))
+    },
+    deleteFile(file) {
+        dispatch(deleteFile(file.id))
     },
     playFile(file) {
         dispatch(changeScrean("playlist"))
@@ -113,6 +159,16 @@ const mapDispatchToProps = (dispatch) => ({
     },
     onGoBack() {
         dispatch(goBack())
+    },
+    onDragEnter(e) {
+        dispatch(onDragEnter(e.dataTransfer.items))
+    },
+    onDragLeave() {
+        dispatch(onDragLeave())
+    },
+    onDrop(e) {
+        const dt = e.dataTransfer;
+        dispatch(onDrop(dt.items, dt.files))
     }
 })
 

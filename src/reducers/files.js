@@ -5,16 +5,18 @@ export default handleActions({
         state.history.pop();
         return Object.assign({}, {
             history: state.history.concat(action.payload),
+            currentFolder: action.payload.folderId,
             currentFiles: action.payload.files
         })
     },
-    "GO_FOLDER": (state, action) => (
-        Object.assign({}, {
+    "GO_FOLDER": (state, action) => {
+        return Object.assign({}, {
             history: state.history.concat(action.payload),
+            currentFolder: action.payload.folderId,
             currentFiles: action.payload.files
         })
-    ),
-    "GO_BACK": (state, action) => {
+    },
+    "GO_BACK": (state) => {
         //check if have any history
         const h = state.history;
         if(h.length == 0) return state;
@@ -22,11 +24,16 @@ export default handleActions({
         //pop previous history
         const prevHistory = h.slice(0, h.length- 1);
         let files = []
-        if(prevHistory.length > 0)//check if have any history now
-            files = prevHistory[prevHistory.length - 1].files//get files if we do
+        let folderId;
+        if(prevHistory.length > 0){//check if have any history now
+            let prev = prevHistory[prevHistory.length - 1];
+            files = prev.files;//get files if we do
+            folderId = prev.folderId;
+        }
         
         return Object.assign({}, {
             history: prevHistory,
+            currentFolder: folderId,
             currentFiles: files
         })
     }

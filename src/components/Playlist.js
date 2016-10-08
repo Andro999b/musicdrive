@@ -48,7 +48,7 @@ const SortableItem = SortableElement(({file, currentPlay, callbacks}) => {
 
   return (<ListItem
     onTouchTap={() => callbacks.setCurrentPlaylistFile(file) }
-    innerDivStyle={{ paddingRight: 92 }}
+    innerDivStyle={{paddingRight: 92}}
     primaryText={file.name}
     rightIconButton={rightIconButton}
     leftIcon={dragHandler}/>)

@@ -31,7 +31,7 @@ class Player extends React.Component {
       muted: false,
       paused: false,
       currentTime: 0,
-      duration: 0,
+      duration: 1,
       buffered: 0,
       looped: false
     }
@@ -68,7 +68,7 @@ class Player extends React.Component {
     const audio = this.refs.audio;
     const timeRanges = audio.buffered;
     if (timeRanges.length > 0) {
-      let buffered = Math.floor(timeRanges.end(0) / audio.duration * 100);
+      let buffered = Math.floor(timeRanges.end(timeRanges.length - 1) / audio.duration * 100);
       this.setState({ buffered })
     }
   }
@@ -90,7 +90,7 @@ class Player extends React.Component {
   playNext() {
     if (this.props.currentPlay && !this.state.looped) {
       this.refs.audio.pause();
-      this.setState({ paused: true, currentTime: 0, duration: 0, buffered: 0 })
+      this.setState({ paused: true, currentTime: 0, duration: 1, buffered: 0 })
       this.props.playNext();
     }
   }
@@ -119,7 +119,8 @@ class Player extends React.Component {
     }
   }
   render() {
-    const currentPlay = this.props.currentPlay;
+    const {muted, looped, paused, buffered, duration, currentTime} = this.state;
+    const {currentPlay, volume} = this.props;
     let src = '';
 
     if (currentPlay)
@@ -130,27 +131,33 @@ class Player extends React.Component {
     }
 
     let volumeIcon;
-    if (this.props.volume == 0 || this.state.muted) {
+    if (volume == 0 || muted) {
       volumeIcon = <AvVolumeOff/>
     } else {
       volumeIcon = <AvVolumeUp/>
     }
 
     let playIcon;
-    if (this.state.paused || currentPlay == null) {
+    if (paused || currentPlay == null) {
       playIcon = <AvPlayArrow/>
     } else {
       playIcon = <AvPause/>
     }
 
     let repeatLoopIcon;
-    if (this.state.looped) {
+    if (looped) {
       repeatLoopIcon = <AvRepeatOne/>
     } else {
       repeatLoopIcon = <AvLoop/>
     }
 
-    const statusText = `${formatTime(this.state.currentTime)} / ${formatTime(this.state.duration)} (${this.state.buffered}%)`;
+    let statusText;
+    
+    if(buffered > 0)
+      statusText = `${formatTime(currentTime)} / ${formatTime(duration)} (${buffered}%)`;
+    else 
+      statusText = '--:-- / --:-- (00%)'
+
     const toolbarStyle = { paddingLeft: 5, paddingRight: 5, height: null, display: "block" };
     const toolbarGroupStyle = { height: 56, maxWidth: 375, margin: "0 auto" };
 
@@ -162,10 +169,11 @@ class Player extends React.Component {
               {playIcon}
             </IconButton>
             <Slider
+              disabled={buffered == 0}
               ref="seeker"
               style={{ width: 210, marginTop: -5 }}
-              value={this.state.currentTime}
-              max={this.state.duration}
+              value={currentTime}
+              max={duration}
               step={1}
               onChange={() => this.displayPosition() }
               onDragStop={() => this.setPosition() }/>
@@ -182,15 +190,15 @@ class Player extends React.Component {
             <IconButton style={iconsBtnStyle} onTouchTap={() => this.switchMute() }>
               {volumeIcon}
             </IconButton>
-            <Slider style={{ width: 80, marginTop: -5 }} value={this.state.muted ? 0 : this.props.volume} onChange={(e, v) => this.setVolume(v) }/>
+            <Slider style={{ width: 80, marginTop: -5 }} value={muted ? 0 : this.props.volume} onChange={(e, v) => this.setVolume(v) }/>
             <ToolbarTitle style={{ marginLeft: 5 }} text={statusText} />
           </ToolbarGroup>
         </Toolbar>
         <audio
           ref="audio"
           src={src}
-          onProgress ={(e) => this.updateBuffered() }
-          onLoadStart ={(e) => this.updateBuffered() }
+          onProgress ={() => this.updateBuffered() }
+          onLoadStart ={() => this.updateBuffered() }
           onEnded={() => this.playNext() }
           onError={(e) => this.onError(e) }
           onTimeUpdate={() => this.updateTime() }>
