@@ -171,7 +171,7 @@ class Player extends React.Component {
             <Slider
               disabled={buffered == 0}
               ref="seeker"
-              style={{ width: 210, marginTop: -5 }}
+              style={{ width: 210, marginBottom: -27 }}
               value={currentTime}
               max={duration}
               step={1}
@@ -190,7 +190,7 @@ class Player extends React.Component {
             <IconButton style={iconsBtnStyle} onTouchTap={() => this.switchMute() }>
               {volumeIcon}
             </IconButton>
-            <Slider style={{ width: 80, marginTop: -5 }} value={muted ? 0 : this.props.volume} onChange={(e, v) => this.setVolume(v) }/>
+            <Slider style={{ width: 80, marginBottom: -27}} value={muted ? 0 : this.props.volume} onChange={(e, v) => this.setVolume(v) }/>
             <ToolbarTitle style={{ marginLeft: 5 }} text={statusText} />
           </ToolbarGroup>
         </Toolbar>
