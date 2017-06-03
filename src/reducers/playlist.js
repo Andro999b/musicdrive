@@ -55,8 +55,7 @@ export default handleActions({
         const newIndex = action.payload.newIndex;
 
         const newFiles = [].concat(state.files);
-        newFiles[newIndex] = state.files[oldIndex];
-        newFiles[oldIndex] = state.files[newIndex];
+        newFiles.splice(newIndex, 0, newFiles.splice(oldIndex, 1)[0]);
 
         return Object.assign({}, state, {files: newFiles});
     },

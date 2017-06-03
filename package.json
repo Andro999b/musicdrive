@@ -4,7 +4,8 @@
   "description": "google drive music player",
   "main": "index.js",
   "scripts": {
-    "server": "webpack-dev-server --no-info --content-base build/"
+    "start": "node_modules/.bin/webpack-dev-server --no-info --content-base build/",
+    "build": "node_modules/.bin/webpack"
   },
   "keywords": [
     "google",
@@ -32,7 +33,7 @@
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "react-sortable-hoc": "0.0.8",
-    "react-tap-event-plugin": "^1.0.0",
+    "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.5.2",
     "redux-actions": "^0.12.0",
     "redux-thunk": "^2.1.0"
